@@ -50,8 +50,10 @@ Function InstallTMC
     Exit-PSSession  
     
     #Install and set the configuration files for Terminal Manager.
+	Write-Debug "Attempting to uninstall the current version of TMC"
+	invoke-command -computername $RemoteComputer -ScriptBlock { msiexec /x 'C:\Tools\TMC\Current\TerminalManagerSetup.msi' /L+*v 'c:\tools\TMC\installlogfile.txt' ALLUSERS=1 /qb } -Verbose
     Write-Debug "Attempting to install the Terminal Manager software"
-    invoke-command -computername $RemoteComputer -ScriptBlock { msiexec /i 'C:\Tools\TMC\Current\TerminalManagerSetup.msi' /L*v 'c:\tools\TMC\installlogfile.txt' ALLUSERS=1 /qb } -Verbose
+    invoke-command -computername $RemoteComputer -ScriptBlock { msiexec /i 'C:\Tools\TMC\Current\TerminalManagerSetup.msi' /L+*v 'c:\tools\TMC\installlogfile.txt' ALLUSERS=1 /qb } -Verbose
     Copy-Item -Path "\\failover.security.local\tmc$\Terminal Manager Configs\*.*" -Destination "\\$RemoteComputer\c$\Program Files (x86)\OnGuard\CustomSolutions\TerminalManagerSetup\" -verbose
     If(Compare-Object $(Get-Content "\\$RemoteComputer\c$\Program Files (x86)\OnGuard\CustomSolutions\TerminalManagerSetup\TerminalManager.exe.config") $(Get-Content "\\failover\tmc$\Terminal Manager Configs\TerminalManager.exe.config"))
     {
